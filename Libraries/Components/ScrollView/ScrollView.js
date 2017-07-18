@@ -670,7 +670,8 @@ const ScrollView = createReactClass({
         ref={this._setInnerViewRef}
         style={contentContainerStyle}
         removeClippedSubviews={this.props.removeClippedSubviews}
-        collapsable={false}>
+        collapsable={false}
+        collapseChildren={!this.props.stickySectionIndices}>>
         {children}
       </ScrollContentContainerViewClass>;
 

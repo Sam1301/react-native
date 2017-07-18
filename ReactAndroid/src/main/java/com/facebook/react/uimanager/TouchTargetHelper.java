@@ -128,8 +128,14 @@ public class TouchTargetHelper {
     ReactZIndexedViewGroup zIndexedViewGroup = viewGroup instanceof ReactZIndexedViewGroup ?
       (ReactZIndexedViewGroup) viewGroup :
       null;
+      final boolean useCustomOrder = (viewGroup instanceof DrawingOrderViewGroup) &&
+      ((DrawingOrderViewGroup) viewGroup).isDrawingOrderEnabled();
     for (int i = childrenCount - 1; i >= 0; i--) {
       int childIndex = zIndexedViewGroup != null ? zIndexedViewGroup.getZIndexMappedChildIndex(i) : i;
+      if (useCustomOrder) {
+        childIndex = ((DrawingOrderViewGroup) viewGroup).getDrawingOrder(i);
+      }
+      
       View child = viewGroup.getChildAt(childIndex);
       PointF childPoint = mTempPoint;
       if (isTransformedTouchPointInView(eventCoords[0], eventCoords[1], viewGroup, child, childPoint)) {

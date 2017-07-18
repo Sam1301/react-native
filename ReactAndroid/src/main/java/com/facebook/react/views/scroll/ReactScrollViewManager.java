@@ -9,10 +9,6 @@
 
 package com.facebook.react.views.scroll;
 
-import javax.annotation.Nullable;
-
-import java.util.Map;
-
 import android.graphics.Color;
 import android.view.View;
 
@@ -28,6 +24,14 @@ import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.ReactClippingViewGroupHelper;
 import com.facebook.react.uimanager.annotations.ReactPropGroup;
 import com.facebook.yoga.YogaConstants;
+import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.ViewGroupManager;
+import com.facebook.react.uimanager.ReactClippingViewGroupHelper;
+import com.facebook.react.uimanager.annotations.ReactProp;
+
+import java.util.Map;
+
+import javax.annotation.Nullable;
 
 /**
  * View manager for {@link ReactScrollView} components.
@@ -123,6 +127,11 @@ public class ReactScrollViewManager
   @ReactProp(name = "overScrollMode")
   public void setOverScrollMode(ReactScrollView view, String value) {
     view.setOverScrollMode(ReactScrollViewHelper.parseOverScrollMode(value));
+  }
+  
+  @ReactProp(name = "stickySectionIndices")
+  public void setStickyHeaderIndices(ReactScrollView view, @Nullable ReadableArray indices) {
+    view.setStickyHeaderIndices(indices);
   }
 
   @Override
