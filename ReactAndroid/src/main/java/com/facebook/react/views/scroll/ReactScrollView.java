@@ -9,6 +9,7 @@
 
 package com.facebook.react.views.scroll;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.lang.reflect.Field;
@@ -34,6 +35,7 @@ import com.facebook.react.uimanager.ReactClippingViewGroup;
 import com.facebook.react.uimanager.ReactClippingViewGroupHelper;
 import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.views.view.ReactViewBackgroundDrawable;
+import com.facebook.react.views.view.ReactViewGroup;
 
 /**
  * A simple subclass of ScrollView that doesn't dispatch measure and layout to its children and has
@@ -67,7 +69,7 @@ public class ReactScrollView extends ScrollView implements ReactClippingViewGrou
   private @Nullable String mScrollPerfTag;
   private @Nullable Drawable mEndBackground;
   private int mEndFillColor = Color.TRANSPARENT;
-  private View mContentView;
+  private ViewGroup mContentView;
   private @Nullable ReactViewBackgroundDrawable mReactBackgroundDrawable;
 
   private String mAnchorTag;
@@ -166,7 +168,7 @@ public class ReactScrollView extends ScrollView implements ReactClippingViewGrou
     }
     findAnchorView();
 
-    android.util.Log.e(TAG, "anchorTag: ", mAnchorTag);
+    Log.e(TAG, "anchorTag: " + mAnchorTag);
   }
 
   @Override
@@ -439,7 +441,8 @@ public class ReactScrollView extends ScrollView implements ReactClippingViewGrou
 
   @Override
   public void onChildViewAdded(View parent, View child) {
-    mContentView = child;
+    assert mContentView instanceof ViewGroup;
+    mContentView = (ViewGroup) child;
     mContentView.addOnLayoutChangeListener(this);
   }
 
