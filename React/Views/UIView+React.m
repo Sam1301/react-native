@@ -37,6 +37,16 @@
   objc_setAssociatedObject(self, @selector(nativeID), nativeID, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
+- (NSNumber *)tagID
+{
+  return objc_getAssociatedObject(self, _cmd);
+}
+
+- (void)setTagID:(NSNumber *)tagID
+{
+  objc_setAssociatedObject(self, @selector(tagID), tagID, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
 #if RCT_DEV
 
 - (RCTShadowView *)_DEBUG_reactShadowView

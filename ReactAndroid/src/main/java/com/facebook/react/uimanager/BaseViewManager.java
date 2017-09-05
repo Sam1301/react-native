@@ -44,6 +44,8 @@ public abstract class BaseViewManager<T extends View, C extends LayoutShadowNode
    */
   public static final String PROP_TEST_ID = "testID";
   public static final String PROP_NATIVE_ID = "nativeID";
+  public static final String PROP_TAG_ID = "tagID";
+
 
   private static MatrixMathHelper.MatrixDecompositionContext sMatrixDecompositionContext =
       new MatrixMathHelper.MatrixDecompositionContext();
@@ -99,6 +101,11 @@ public abstract class BaseViewManager<T extends View, C extends LayoutShadowNode
   public void setNativeId(T view, String nativeId) {
     view.setTag(R.id.view_tag_native_id, nativeId);
     ReactFindViewUtil.notifyViewRendered(view);
+  }
+
+  @ReactProp(name = PROP_TAG_ID)
+  public void setTagId(T view, String tagId) {
+    view.setTag(R.id.view_tag_tag_id, tagId);
   }
 
   @ReactProp(name = PROP_ACCESSIBILITY_LABEL)

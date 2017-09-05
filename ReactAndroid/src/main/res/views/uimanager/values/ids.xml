@@ -5,4 +5,6 @@
 
   <!-- tag is used to store the nativeID tag -->
   <item type="id" name="view_tag_native_id"/>
+
+  <item type="id" name="view_tag_tag_id"/>
 </resources>

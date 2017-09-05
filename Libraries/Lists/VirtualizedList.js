@@ -1234,6 +1234,15 @@ class CellRenderer extends React.Component {
         : this.props.onLayout;
     // NOTE: that when this is a sticky header, `onLayout` will get automatically extracted and
     // called explicitly by `ScrollViewStickyHeader`.
+    if (item.type === 'message') {
+      return (
+        <View onLayout={onLayout} style={inversionStyle} tag={item.message.id.toString()}>
+          {element}
+          {ItemSeparatorComponent &&
+            <ItemSeparatorComponent {...this.state.separatorProps} />}
+        </View>
+      );
+    }
     return (
       <View onLayout={onLayout} style={inversionStyle}>
         {element}

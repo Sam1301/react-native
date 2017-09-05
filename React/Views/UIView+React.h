@@ -29,6 +29,8 @@
  */
 @property (nonatomic, copy) NSString *nativeID;
 
+@property (nonatomic, copy) NSString *tagID;
+
 /**
  * Layout direction of the view.
  * Internally backed to `semanticContentAttribute` property.

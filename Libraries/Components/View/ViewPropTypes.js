@@ -50,6 +50,7 @@ export type ViewProps = {
   onMagicTap?: Function,
   testID?: string,
   nativeID?: string,
+  tagID?: string,  
   onResponderGrant?: Function,
   onResponderMove?: Function,
   onResponderReject?: Function,
@@ -221,6 +222,8 @@ module.exports = {
    */
   nativeID: PropTypes.string,
 
+  tagID: PropTypes.string,
+  
   /**
    * For most touch interactions, you'll simply want to wrap your component in
    * `TouchableHighlight` or `TouchableOpacity`. Check out `Touchable.js`,

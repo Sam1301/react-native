@@ -116,6 +116,8 @@ RCT_EXPORT_VIEW_PROPERTY(tvParallaxProperties, NSDictionary)
 
 RCT_EXPORT_VIEW_PROPERTY(nativeID, NSString)
 
+RCT_EXPORT_VIEW_PROPERTY(tagID, NSString)
+
 // Acessibility related properties
 RCT_REMAP_VIEW_PROPERTY(accessible, reactAccessibilityElement.isAccessibilityElement, BOOL)
 RCT_REMAP_VIEW_PROPERTY(accessibilityLabel, reactAccessibilityElement.accessibilityLabel, NSString)
