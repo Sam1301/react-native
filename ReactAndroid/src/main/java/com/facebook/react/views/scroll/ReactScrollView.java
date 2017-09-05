@@ -44,8 +44,13 @@ import com.facebook.react.views.view.ReactViewBackgroundDrawable;
  */
 public class ReactScrollView extends ScrollView implements ReactClippingViewGroup, ViewGroup.OnHierarchyChangeListener, View.OnLayoutChangeListener {
 
+  private static String TAG = ReactScrollView.class.getSimpleName();
+
   private static Field sScrollerField;
   private static boolean sTriedToGetScrollerField = false;
+
+  private static Field sAllReactChildrenField;
+  private static boolean sTriedAllReactChildrenField = false;
 
   private final OnScrollDispatchHelper mOnScrollDispatchHelper = new OnScrollDispatchHelper();
   private final OverScroller mScroller;
@@ -64,6 +69,9 @@ public class ReactScrollView extends ScrollView implements ReactClippingViewGrou
   private int mEndFillColor = Color.TRANSPARENT;
   private View mContentView;
   private @Nullable ReactViewBackgroundDrawable mReactBackgroundDrawable;
+
+  private String mAnchorTag;
+  private int mLastAnchorY;
 
   public ReactScrollView(ReactContext context) {
     this(context, null);
@@ -105,8 +113,22 @@ public class ReactScrollView extends ScrollView implements ReactClippingViewGrou
       mScroller = null;
     }
 
+    getAllReactChildrenField(null);
     setOnHierarchyChangeListener(this);
     setScrollBarStyle(SCROLLBARS_OUTSIDE_OVERLAY);
+  }
+
+
+  public void getAllReactChildrenField(Class clazz) {
+    if (!sTriedAllReactChildrenField) {
+      sTriedAllReactChildrenField = true;
+      try {
+        sAllReactChildrenField = (clazz == null ? ReactViewGroup.class : clazz).getDeclaredField("mAllChildren");
+        sAllReactChildrenField.setAccessible(true);
+      } catch (NoSuchFieldException e) {
+        Log.e(TAG, "Failed to get mAllChildren field for ReactViewGroup!");
+      }
+    }
   }
 
   public void setSendMomentumEvents(boolean sendMomentumEvents) {
@@ -142,6 +164,9 @@ public class ReactScrollView extends ScrollView implements ReactClippingViewGrou
     if (mRemoveClippedSubviews) {
       updateClippingRect();
     }
+    findAnchorView();
+
+    android.util.Log.e(TAG, "anchorTag: ", mAnchorTag);
   }
 
   @Override
@@ -150,6 +175,54 @@ public class ReactScrollView extends ScrollView implements ReactClippingViewGrou
     if (mRemoveClippedSubviews) {
       updateClippingRect();
     }
+    findAnchorView();
+  }
+
+  protected void findAnchorView() {
+    // Set up anchor view
+    mAnchorTag = null;
+
+    if (mRemoveClippedSubviews && !(mContentView instanceof ReactViewGroup)) {
+      getAllReactChildrenField(mContentView.getClass());
+    }
+    View[] children = null;
+    if (mRemoveClippedSubviews && sAllReactChildrenField != null) {
+      try {
+        children = (View[]) sAllReactChildrenField.get(mContentView);
+      } catch (IllegalAccessException e) {
+        Log.e(TAG, "Failed to get mAllChildren field for " + mContentView.getClass().getSimpleName());
+        return;
+      }
+    }
+
+    int arrLength = mRemoveClippedSubviews && children != null ? children.length : mContentView.getChildCount();
+    for (int i = 0; i < arrLength; i++) {
+      View child = mRemoveClippedSubviews && children != null ? children[i] : mContentView.getChildAt(i);
+      if (child == null || !(child.getTag() instanceof String)) {
+        continue;
+      }
+
+      String tag = (String) child.getTag();
+      if (child.getBottom() >= getScrollY()) {
+        mLastAnchorY = child.getTop();
+        mAnchorTag = tag;
+        break;
+      }
+    }
+  }
+
+  private boolean isChildVisible(@Nonnull View child) {
+    int height = getHeight();
+    int containerTop = getScrollY();
+    int containerBottom = containerTop + height;
+    int viewTop = child.getTop();
+    int viewBottom = child.getBottom();
+
+    return (viewTop >= containerTop && viewBottom <= containerBottom);
+  }
+
+  private boolean isMessageTag(@Nonnull View child) {
+    return (child.getTag() instanceof String);
   }
 
   @Override
@@ -165,6 +238,7 @@ public class ReactScrollView extends ScrollView implements ReactClippingViewGrou
         mDoneFlinging = false;
       }
 
+      findAnchorView();
       ReactScrollViewHelper.emitScrollEvent(
         this,
         mOnScrollDispatchHelper.getXFlingVelocity(),
